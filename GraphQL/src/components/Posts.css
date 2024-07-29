@@ -1,0 +1,50 @@
+.posts-container {
+    padding: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .post-item {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    background-color: #fefefe;
+  }
+  
+  .post-item h3 {
+    margin: 0 0 8px;
+    font-size: 1.5em;
+    color: #333;
+  }
+  
+  .post-item p {
+    margin: 8px 0;
+    color: #555;
+  }
+  
+  .post-item small {
+    display: block;
+    margin-top: 8px;
+    color: #888;
+  }
+  
+  .post-item-actions {
+    margin-top: 16px;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .loading,
+  .error {
+    text-align: center;
+    margin-top: 20px;
+    color: #999;
+  }
+  
+  .no-posts {
+    text-align: center;
+    margin-top: 20px;
+    color: #999;
+  }
+  

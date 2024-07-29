@@ -1,0 +1,27 @@
+.todo-list {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .todo-item {
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin: 5px 0;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .todo-item.completed {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+  }
+  
+  .todo-item.incomplete {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+  }
+  
+  button {
+    margin: 5px;
+  }
+  

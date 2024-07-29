@@ -1,0 +1,46 @@
+.profile-container {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 16px;
+    max-width: 400px;
+    margin: 0 auto;
+    background-color: #f9f9f9;
+  }
+  
+  .profile-header {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 16px;
+    color: #333;
+  }
+  
+  .profile-info {
+    font-size: 1em;
+    color: #555;
+  }
+  
+  .profile-info p {
+    margin: 8px 0;
+  }
+  
+  .profile-info p span {
+    font-weight: bold;
+  }
+  
+  .profile-loading,
+  .profile-error,
+  .profile-no-data {
+    text-align: center;
+    font-size: 1em;
+    color: #999;
+    margin-top: 20px;
+  }
+  
+  .profile-container h1 {
+    color: #333;
+  }
+  
+  .profile-container p {
+    margin: 5px 0;
+  }
+  
