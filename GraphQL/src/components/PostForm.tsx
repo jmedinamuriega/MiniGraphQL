@@ -1,57 +1,59 @@
 import React, { useState, useEffect } from 'react';
+import { useMutation } from '@apollo/client';
+import { CREATE_POST, UPDATE_POST } from '../graphql/mutations/mutations';
+import { Post } from '../interfaces/interfaces';
 import './PostForm.css';
 
 interface PostFormProps {
+  userId: string; 
+  post?: Post | null;
   onSuccess: () => void;
 }
 
-interface Post {
-  id: number;
-  title: string;
-  body: string;
-}
-
-const PostForm: React.FC<PostFormProps> = ({ onSuccess }) => {
-  const [title, setTitle] = useState<string>(localStorage.getItem('title') || '');
-  const [body, setBody] = useState<string>(localStorage.getItem('body') || '');
-  const [posts, setPosts] = useState<Post[]>(() => {
-    const savedPosts = localStorage.getItem('posts');
-    return savedPosts ? JSON.parse(savedPosts) : [];
-  });
+const PostForm: React.FC<PostFormProps> = ({ userId, post, onSuccess }) => {
+  const [title, setTitle] = useState<string>(post?.title || '');
+  const [body, setBody] = useState<string>(post?.body || '');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    localStorage.setItem('title', title);
-  }, [title]);
+  const [createPost] = useMutation(CREATE_POST);
+  const [updatePost] = useMutation(UPDATE_POST);
 
   useEffect(() => {
-    localStorage.setItem('body', body);
-  }, [body]);
+    if (post) {
+      setTitle(post.title);
+      setBody(post.body);
+    } else {
+      setTitle('');
+      setBody('');
+    }
+  }, [post]);
 
-  useEffect(() => {
-    localStorage.setItem('posts', JSON.stringify(posts));
-  }, [posts]);
-
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
     setError(null);
+
     try {
-      const newPost: Post = {
-        id: Date.now(), 
-        title,
-        body,
-      };
-      setPosts((prevPosts) => [newPost, ...prevPosts]);
-      setTitle('');
-      setBody('');
-      localStorage.removeItem('title');
-      localStorage.removeItem('body');
+      if (post) {
+        await updatePost({
+          variables: {
+            id: post.id,
+            input: { title, body },
+          },
+        });
+      } else {
+        await createPost({
+          variables: {
+            userId,
+            input: { title, body },
+          },
+        });
+      }
       onSuccess();
     } catch (err) {
-      setError('Error creating post');
-      console.error('Error creating post:', err);
+      setError('Error saving post');
+      console.error('Error saving post:', err);
     } finally {
       setLoading(false);
     }
@@ -60,11 +62,12 @@ const PostForm: React.FC<PostFormProps> = ({ onSuccess }) => {
   return (
     <div className="post-form-container">
       <form onSubmit={handleSubmit}>
-        <h3>Create a New Post</h3>
+        <h3>{post ? 'Edit Post' : 'Create a New Post'}</h3>
         {error && <p className="error-message">{error}</p>}
         <div>
-          <label>Title</label>
+          <label htmlFor="title">Title</label>
           <input
+            id="title"
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -73,8 +76,9 @@ const PostForm: React.FC<PostFormProps> = ({ onSuccess }) => {
           />
         </div>
         <div>
-          <label>Body</label>
+          <label htmlFor="body">Body</label>
           <textarea
+            id="body"
             value={body}
             onChange={(e) => setBody(e.target.value)}
             required
@@ -82,20 +86,9 @@ const PostForm: React.FC<PostFormProps> = ({ onSuccess }) => {
           />
         </div>
         <button type="submit" disabled={loading}>
-          {loading ? 'Creating...' : 'Create Post'}
+          {loading ? 'Saving...' : post ? 'Update Post' : 'Create Post'}
         </button>
       </form>
-      <div>
-        <h3>Posts</h3>
-        <ul className="post-list">
-          {posts.map((post) => (
-            <li key={post.id} className="post-item">
-              <h4>{post.title}</h4>
-              <p>{post.body}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
     </div>
   );
 };

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { GET_USER_TODOS } from '../graphql/queries/todoQueries';
 import { Todo } from '../interfaces/interfaces';
-import './Todos.css'; // Import CSS for styling
+import './Todos.css'; 
 
 const Todos: React.FC<{ userId: string }> = ({ userId }) => {
   const { loading, error, data } = useQuery<{ user: { todos: Todo[] } }>(GET_USER_TODOS, {

@@ -29,6 +29,7 @@ export const GET_ALL_POSTS = gql`
     }
   }
 `;
+
 export const GET_USER = gql`
   query GetUserPosts($userId: ID!) {
     user(id: $userId) {
@@ -44,6 +45,14 @@ export const GET_USER = gql`
       company {
         name
       }
+    }
+  }
+`;
+
+export const DELETE_POST = gql`
+  mutation DeletePost($id: ID!) {
+    deletePost(id: $id) {
+      id
     }
   }
 `;

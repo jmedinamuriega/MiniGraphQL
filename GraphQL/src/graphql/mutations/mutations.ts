@@ -1,27 +1,50 @@
+
 import { gql } from '@apollo/client';
 
 export const CREATE_POST = gql`
-  mutation CreatePost($userId: ID!, $title: String!, $body: String!) {
-    createPost(userId: $userId, title: $title, body: $body) {
+mutation CreatePost($userId: ID!, $input: PostInput!) {
+  createPost(userId: $userId, input: $input) {
+    id
+    title
+    body
+    comments {
       id
-      title
+      name
       body
     }
   }
+}
 `;
 
 export const UPDATE_POST = gql`
-  mutation UpdatePost($id: ID!, $title: String!, $body: String!) {
-    updatePost(id: $id, title: $title, body: $body) {
+mutation UpdatePost($id: ID!, $input: PostInput!) {
+  updatePost(id: $id, input: $input) {
+    id
+    title
+    body
+    comments {
       id
-      title
+      name
       body
     }
   }
+}
+
 `;
+
 
 export const DELETE_POST = gql`
 mutation DeletePost($id: ID!) {
-  deletePost(id: $id)
+  deletePost(id: $id) {
+    id
+    title
+    body
+    comments {
+      id
+      name
+      body
+    }
+  }
 }
+
 `;

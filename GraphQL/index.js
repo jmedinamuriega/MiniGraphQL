@@ -1,5 +1,6 @@
 import { ApolloServer, gql } from 'apollo-server';
 
+
 const typeDefs = gql`
   type User {
     id: ID!
@@ -58,6 +59,16 @@ const typeDefs = gql`
     completed: Boolean!
   }
 
+  input PostInput {
+    title: String!
+    body: String!
+  }
+
+  input TodoInput {
+    title: String!
+    completed: Boolean!
+  }
+
   type Query {
     user(id: ID!): User
     posts: [Post!]!
@@ -66,16 +77,17 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    createPost(userId: ID!, title: String!, body: String!): Post
-    updatePost(id: ID!, title: String!, body: String!): Post
+    createPost(userId: ID!, input: PostInput!): Post
+    updatePost(id: ID!, input: PostInput!): Post
     deletePost(id: ID!): Post
     
-    createTodo(userId: ID!, title: String!, completed: Boolean!): Todo
-    updateTodo(id: ID!, title: String!, completed: Boolean!): Todo
+    createTodo(userId: ID!, input: TodoInput!): Todo
+    updateTodo(id: ID!, input: TodoInput!): Todo
     deleteTodo(id: ID!): Todo
   }
 `;
 
+// Mock data
 const mockPosts = [
   { id: '1', title: 'Post 1', body: 'Content 1', comments: [{ id: '1', name: 'Commenter 1', body: 'Nice post!' }] },
   { id: '2', title: 'Post 2', body: 'Content 2', comments: [{ id: '2', name: 'Commenter 2', body: 'Interesting!' }] },
@@ -91,6 +103,7 @@ const mockTodos = [
   { id: '2', title: 'Todo 2', completed: true },
 ];
 
+// Define resolvers
 const resolvers = {
   Query: {
     user: (parent, args) => {
@@ -124,31 +137,34 @@ const resolvers = {
     createPost: (parent, args) => {
       const newPost = {
         id: String(mockPosts.length + 1),
-        title: args.title,
-        body: args.body,
+        title: args.input.title,
+        body: args.input.body,
         comments: [],
       };
       mockPosts.push(newPost);
       return newPost;
     },
+    
     updatePost: (parent, args) => {
       const postIndex = mockPosts.findIndex((post) => post.id === args.id);
       if (postIndex === -1) throw new Error('Post not found');
-      mockPosts[postIndex] = { ...mockPosts[postIndex], title: args.title, body: args.body };
+      mockPosts[postIndex] = { ...mockPosts[postIndex], title: args.input.title, body: args.input.body };
       return mockPosts[postIndex];
     },
+    
     deletePost: (parent, args) => {
       const postIndex = mockPosts.findIndex((post) => post.id === args.id);
       if (postIndex === -1) throw new Error('Post not found');
       const deletedPost = mockPosts.splice(postIndex, 1);
       return deletedPost[0];
     },
+    
 
     createTodo: (parent, args) => {
       const newTodo = {
         id: String(mockTodos.length + 1),
-        title: args.title,
-        completed: args.completed,
+        title: args.input.title,
+        completed: args.input.completed,
       };
       mockTodos.push(newTodo);
       return newTodo;
@@ -156,7 +172,7 @@ const resolvers = {
     updateTodo: (parent, args) => {
       const todoIndex = mockTodos.findIndex((todo) => todo.id === args.id);
       if (todoIndex === -1) throw new Error('Todo not found');
-      mockTodos[todoIndex] = { ...mockTodos[todoIndex], title: args.title, completed: args.completed };
+      mockTodos[todoIndex] = { ...mockTodos[todoIndex], title: args.input.title, completed: args.input.completed };
       return mockTodos[todoIndex];
     },
     deleteTodo: (parent, args) => {
@@ -168,6 +184,7 @@ const resolvers = {
   },
 };
 
+// Create and start the Apollo Server
 const server = new ApolloServer({ typeDefs, resolvers });
 
 server.listen().then(({ url }) => {
